@@ -1,7 +1,7 @@
 @GoogleSearch
 Feature: Google Search
 
-  @FetchFirstResults
+  @google
   Scenario: Perform Google search and fetch first results
     Given User launches a browser
     And User navigates to Google home page

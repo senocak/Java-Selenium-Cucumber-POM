@@ -45,7 +45,7 @@ public class GoogleHomePage extends Page{
      * Click on search button
      */
     public void clickOnGoogleSearch(){
-        log.info("Click ENTER");
+        log.info("Clicking on search button");
         sendKeys(searchTextBoxElement, Keys.ENTER);
     }
 

@@ -80,9 +80,7 @@ public abstract class Page extends LoadableComponent {
             System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/test/resources/drivers/chromedriver.exe");
             driver = new ChromeDriver();
         }else if (Objects.equals(getPropertyValue("webdriver"), "edge")){
-            //System.setProperty("webdriver.edge.driver", System.getProperty("user.dir") + "/src/test/resources/drivers/msedgedriver.exe");
-            WebDriverManager.edgedriver().setup();
-            driver = new EdgeDriver();
+            driver = WebDriverManager.edgedriver().create();
         }
         driver.manage().deleteAllCookies();
         driver.manage().window().maximize();
