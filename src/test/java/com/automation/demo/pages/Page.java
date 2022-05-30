@@ -1,5 +1,6 @@
 package com.automation.demo.pages;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -73,12 +74,14 @@ public abstract class Page extends LoadableComponent {
      * Launch the browser
      */
     public void launchBrowser() {
-        if (driver != null) endSession();
+        if (driver != null)
+            endSession();
         if (Objects.equals(getPropertyValue("webdriver"), "chrome")){
             System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/src/test/resources/drivers/chromedriver.exe");
             driver = new ChromeDriver();
         }else if (Objects.equals(getPropertyValue("webdriver"), "edge")){
-            System.setProperty("webdriver.edge.driver", System.getProperty("user.dir") + "/src/test/resources/drivers/msedgedriver.exe");
+            //System.setProperty("webdriver.edge.driver", System.getProperty("user.dir") + "/src/test/resources/drivers/msedgedriver.exe");
+            WebDriverManager.edgedriver().setup();
             driver = new EdgeDriver();
         }
         driver.manage().deleteAllCookies();
