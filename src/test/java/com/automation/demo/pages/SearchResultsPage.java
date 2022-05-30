@@ -13,11 +13,20 @@ public class SearchResultsPage extends Page {
     private final By searchResults = By.id("result-stats");
     private String searchResultReference = "(//div[@class='tF2Cxc'])[%s]";
 
+    /**
+     * Singleton instance of SearchResultsPage
+     * @return SearchResultsPage instance
+     */
     public static SearchResultsPage getInstance() {
-        if (instance == null) instance = new SearchResultsPage();
+        if (instance == null)
+            instance = new SearchResultsPage();
         return instance;
     }
 
+    /**
+     * Get the boolean value of the search results is displayed or not
+     * @return boolean value
+     */
     public boolean isSearchResultsDisplayed() {
         try {
             log.info("Awaiting search results display");
@@ -29,6 +38,11 @@ public class SearchResultsPage extends Page {
         }
     }
 
+    /**
+     * Get the search results
+     * @param nthResult nth result
+     * @return Map of search results
+     */
     public Map<String, String> getSearchResults(String nthResult) {
         Map<String, String> searchResultDetails = new LinkedHashMap<>();
         searchResultReference = String.format(searchResultReference, nthResult);
@@ -47,6 +61,7 @@ public class SearchResultsPage extends Page {
         }
         return searchResultDetails;
     }
+
     @Override protected void load() {}
     @Override protected void isLoaded() throws Error {}
 }

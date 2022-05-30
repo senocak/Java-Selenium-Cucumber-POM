@@ -1,23 +1,47 @@
 package com.automation.demo.pages;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.InvalidArgumentException;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NotFoundException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.touch.TouchActions;
-import org.openqa.selenium.support.ui.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.LoadableComponent;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import java.io.IOException;
-import java.lang.invoke.MethodHandles;
 import java.time.Duration;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-import static com.automation.demo.utility.Constants.*;
+import static com.automation.demo.utility.Constants.DOCUMENT_READY_TIMEOUT;
+import static com.automation.demo.utility.Constants.EXPECTED_CONDITION_POLLING_INTERVAL;
+import static com.automation.demo.utility.Constants.EXPECTED_CONDITION_TIMEOUT;
+import static com.automation.demo.utility.Constants.USER_WAIT_IN_MS;
+import static com.automation.demo.utility.Constants.WEBDRIVER_TIME_OUT_IN_SECONDS;
 
+@Slf4j
 public abstract class Page extends LoadableComponent {
-    protected static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
     protected static final Properties config = new Properties();
     protected static WebDriver driver;
 
@@ -25,21 +49,29 @@ public abstract class Page extends LoadableComponent {
         try {
             config.load(Page.class.getResourceAsStream("/config.properties"));
         } catch (IOException e) {
-            LOGGER.severe("IOException: " + e.getMessage());
+            log.error("Error loading config.properties file", e);
         }
     }
 
+    /**
+     * Get the value of a property
+     * @param prop the property to get
+     * @return the value of the property
+     */
     public String getPropertyValue(String prop) {
-        LOGGER.info("Getting value for " + prop);
+        log.info("Getting value for " + prop);
         Optional<String> opt = Optional.ofNullable(config.getProperty(prop));
         if (opt.isPresent()) {
-            LOGGER.info("id for " + prop + " is " + opt.get());
+            log.info("id for " + prop + " is " + opt.get());
             return opt.get();
         }
-        LOGGER.severe(prop + " could not be found in config.properties!");
+        log.error("No value found for {}", prop);
         return null;
     }
 
+    /**
+     * Launch the browser
+     */
     public void launchBrowser() {
         if (driver != null) endSession();
         if (Objects.equals(getPropertyValue("webdriver"), "chrome")){
@@ -54,13 +86,29 @@ public abstract class Page extends LoadableComponent {
         driver.manage().timeouts().pageLoadTimeout(40, TimeUnit.SECONDS);
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
+
+    /**
+     * Redirect to the given url
+     * @param url the url to redirect to
+     */
     public void get(String url) {
         driver.get(url);
     }
+
+    /**
+     * End the current session
+     */
     public void endSession() {
         driver.quit();
     }
 
+    /**
+     * Send keys to the given element
+     * @param p the element to send keys to
+     * @param t the keys to send
+     * @param <P> the type of element
+     * @param <T> the type of keys
+     */
     public <P, T> void sendKeys(P p, T t) {
         sleepms(USER_WAIT_IN_MS);
         if ((p == null))
@@ -83,7 +131,7 @@ public abstract class Page extends LoadableComponent {
                 el = ((WebElement) p);
             }
 
-            LOGGER.fine("************Typing on ************** " + el + " " + t);
+            log.info("************Typing on ************** " + el + " " + t);
             if (t instanceof String) {
                 el.clear();
                 el.sendKeys(((String) t));
@@ -95,6 +143,11 @@ public abstract class Page extends LoadableComponent {
         });
     }
 
+    /**
+     * Click on the given element
+     * @param p the element to click on
+     * @param <T> the type of element
+     */
     public <T> void click(T p) {
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(EXPECTED_CONDITION_TIMEOUT))
@@ -112,24 +165,33 @@ public abstract class Page extends LoadableComponent {
             } else if (p instanceof WebElement) {
                 el = ((WebElement) p);
             } else if (p instanceof String) {
-                LOGGER.info("p is " + p);
+                log.info("p is " + p);
                 el = (WebElement) ((JavascriptExecutor) driver).executeScript("return " + p);
                 if (el == null)
                     return null;
             }
             new WebDriverWait(driver, WEBDRIVER_TIME_OUT_IN_SECONDS)
                     .until(ExpectedConditions.elementToBeClickable(el));
-            LOGGER.fine("************Tapping on ************** " + el.toString());
+            log.info("************Tapping on ************** " + el.toString());
             el.click();
             return el;
         });
         sleepms(USER_WAIT_IN_MS);
     }
 
+    /**
+     * Check if the given element is checked
+     * @param by the element to check
+     * @return true if the element is checked
+     */
     protected boolean isChecked(By by) {
         return getVisibleElement(by).isSelected();
     }
 
+    /**
+     * Right click on the given element
+     * @param by the element to right click on
+     */
     public void rightClickOn(By by) {
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(EXPECTED_CONDITION_TIMEOUT))
@@ -152,26 +214,34 @@ public abstract class Page extends LoadableComponent {
         sleepms(USER_WAIT_IN_MS);
     }
 
+    /**
+     * Wait for the given element to be visible
+     */
     private void waitUntilDocumentReady() {
-        LOGGER.info("checking if document is in ready state");
+        log.info("checking if document is in ready state");
         JavascriptExecutor js = (JavascriptExecutor) driver;
         int i = 0;
         do {
             try {
                 if (js.executeScript("return document.readyState").equals("complete")) {
-                    LOGGER.info("document state is ready");
+                    log.info("document state is ready");
                     return;
                 }
-                LOGGER.info("****************waiting for page to be in ready state***********: " + i);
+                log.info("****************waiting for page to be in ready state***********: " + i);
                 sleepms(1000);
                 i++;
             } catch (WebDriverException e) {
-                LOGGER.info("WebDriverException: " + e.getMessage());
+                log.info("WebDriverException: " + e.getMessage());
             }
         } while (i < DOCUMENT_READY_TIMEOUT);
         Assert.fail("Document was not ready in "+DOCUMENT_READY_TIMEOUT+" seconds. Check if application is debuggable");
     }
 
+    /**
+     * Get the web element for the given locator
+     * @param by the locator to find the element
+     * @return the web element
+     */
     protected WebElement getElement(By by) {
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(EXPECTED_CONDITION_TIMEOUT))
@@ -184,6 +254,11 @@ public abstract class Page extends LoadableComponent {
         return wait.until(driver -> driver.findElement(by));
     }
 
+    /**
+     * Get the visible web element for the given locator
+     * @param by the locator to find the element
+     * @return the web element
+     */
     protected WebElement getVisibleElement(By by) {
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(EXPECTED_CONDITION_TIMEOUT))
@@ -200,6 +275,11 @@ public abstract class Page extends LoadableComponent {
         });
     }
 
+    /**
+     * Get the elements for the given locator
+     * @param by the locator to find the elements
+     * @return the web elements
+     */
     protected List<WebElement> getElements(By by) {
         Wait<WebDriver> wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(EXPECTED_CONDITION_TIMEOUT))
@@ -212,6 +292,11 @@ public abstract class Page extends LoadableComponent {
         return wait.until(driver -> driver.findElements(by));
     }
 
+    /**
+     * Get the last visible web element for the given locator
+     * @param by the locator to find the element
+     * @return the web element
+     */
     protected WebElement getLastElement(By by) {
         List<WebElement> els;
         String currentPageTitle;
@@ -220,35 +305,50 @@ public abstract class Page extends LoadableComponent {
         } catch (Exception e) {
             currentPageTitle = "???";
         }
-        LOGGER.info("Locating elements " + by.toString() + " on page titled " + currentPageTitle);
+        log.info("Locating elements " + by.toString() + " on page titled " + currentPageTitle);
         els = getElements(by);
-        LOGGER.info("List size is " + els.size());
+        log.info("List size is " + els.size());
         return els.get(els.size() - 1);
     }
 
+    /**
+     * Scroll to the element
+     * @param by the locator to find the element
+     */
     public void scroll(By by) {
         TouchActions action = new TouchActions(driver);
         action.scroll(10, 100);
         action.perform();
     }
 
+    /**
+     * Sleep for the given time
+     * @param time the time to sleep
+     */
     public void sleepms(long time) {
         try {
-            LOGGER.info("Sleeping for " + time + " ms");
+            log.info("Sleeping for " + time + " ms");
             Thread.sleep(time);
         } catch (InterruptedException e) {
-            LOGGER.info("InterruptedException: " + e.getMessage());
+            log.info("InterruptedException: " + e.getMessage());
         }
     }
 
+    /**
+     * Get the screen shot of the current page
+     * @return the screen shot
+     */
     public byte[] getScreenshot() {
-        LOGGER.info("Capturing screenshot");
+        log.info("Capturing screenshot");
         return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
     }
 
+    /**
+     * Get the logs for the current page
+     */
     public void getLogs() {
         Set<String> logs = driver.manage().logs().getAvailableLogTypes();
-        LOGGER.info("Logs are; " + logs);
+        log.info("Logs are; " + logs);
         System.out.println(logs);
     }
 }
