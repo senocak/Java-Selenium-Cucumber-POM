@@ -13,7 +13,10 @@ public class ConfigFileReader {
     private static ConfigFileReader instance;
     private final Properties properties = new Properties();
 
-    public ConfigFileReader() {
+    /**
+     * Constructor to initialize the properties file
+     */
+    private ConfigFileReader() {
         try {
             properties.load(ConfigFileReader.class.getResourceAsStream("/config.properties"));
         } catch (IOException e) {
@@ -28,6 +31,14 @@ public class ConfigFileReader {
      */
     public static ConfigFileReader getInstance() {
         return instance == null ? new ConfigFileReader() : instance;
+    }
+
+    /**
+     * Get the instance of Properties
+     * @return Properties
+     */
+    public Properties getProperties() {
+        return properties;
     }
 
     /**

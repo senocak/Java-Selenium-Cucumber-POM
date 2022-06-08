@@ -5,18 +5,21 @@ import org.openqa.selenium.By;
 
 @Slf4j
 public class LoginPage extends Page {
-    private static LoginPage instance = null;
+    private static final LoginPage instance = new LoginPage();
     private final By INPUT_USERNAME = By.xpath("/html/body/div[1]/div/div/div/div/form/label[1]/div/div[1]/div[2]/input");
     private final By INPUT_PASSWORD = By.xpath("/html/body/div[1]/div/div/div/div/form/label[2]/div/div[1]/div[2]/input");
     private final By BUTTON_LOGIN = By.xpath("/html/body/div[1]/div/div/div/div/form/div[3]/button");
+
+    /**
+     * Private constructor to prevent instantiation
+     */
+    private LoginPage(){}
 
     /**
      * Singleton instance of SearchResultsPage
      * @return SearchResultsPage instance
      */
     public static LoginPage getInstance() {
-        if (instance == null)
-            instance = new LoginPage();
         return instance;
     }
 

@@ -200,4 +200,3 @@ public class Assert extends Page {
     @Override protected void load() {}
     @Override protected void isLoaded() throws Error {}
 }
-

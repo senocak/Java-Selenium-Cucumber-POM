@@ -14,6 +14,11 @@ public class SearchResultsPage extends Page {
     private String searchResultReference = "(//div[@class='tF2Cxc'])[%s]";
 
     /**
+     * Private constructor to prevent instantiation
+     */
+    private SearchResultsPage() {}
+
+    /**
      * Singleton instance of SearchResultsPage
      * @return SearchResultsPage instance
      */

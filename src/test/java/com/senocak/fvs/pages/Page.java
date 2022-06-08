@@ -48,6 +48,24 @@ public abstract class Page extends LoadableComponent {
     protected static WebDriver driver;
 
     /**
+     * Launch the browser
+     */
+    public WebDriver launchBrowser() {
+        if (driver != null)
+            closeDriver();
+        switch (configFileReader.getEnvironment()) {
+            case LOCAL:
+                driver = createLocalDriver();
+                break;
+            case REMOTE:
+            default:
+                createRemoteDriver();
+                break;
+        }
+        return driver;
+    }
+
+    /**
      * Create local driver instance
      * @return web driver instance
      */
@@ -131,23 +149,6 @@ public abstract class Page extends LoadableComponent {
         } catch (Exception e) {
             log.error("Error closing driver. Exception: {}" + ExceptionUtils.getMessage(e));
         }
-    }
-
-    /**
-     * Launch the browser
-     */
-    public WebDriver launchBrowser() {
-        if (driver != null)
-            closeDriver();
-        switch (configFileReader.getEnvironment()) {
-            case LOCAL:
-                driver = createLocalDriver();
-                break;
-            case REMOTE:
-                driver = createRemoteDriver();
-                break;
-        }
-        return driver;
     }
 
     /**

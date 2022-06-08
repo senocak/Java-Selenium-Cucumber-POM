@@ -7,19 +7,22 @@ import org.openqa.selenium.WebElement;
 
 @Slf4j
 public class GoogleHomePage extends Page{
-    private static GoogleHomePage instance = null;
+    private static final GoogleHomePage instance = new GoogleHomePage();
     private static final String GOOGLE_URL = "https://www.google.com/";
     private final By searchTextBox = By.name("q");
     private final By searchButton = By.xpath("//span[@class='QCzoEc z1asCe MZy1Rb']//ancestor::div[5]//div[@class='FPdoLc lJ9FBc']//input[@value='Google Search']");
     private WebElement searchTextBoxElement;
 
     /**
+     * Private constructor to prevent instantiation
+     */
+    private GoogleHomePage(){}
+
+    /**
      * Singleton instance of GoogleHomePage
      * @return instance of GoogleHomePage
      */
     public static GoogleHomePage getInstance() {
-        if (instance == null)
-            instance = new GoogleHomePage();
         return instance;
     }
 
