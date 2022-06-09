@@ -60,7 +60,7 @@ public class DriverManager {
         DriverType driverType;
         try {
             driverType = DriverType.valueOf(BROWSER.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             log.error("Browser name not matched. Exception: {}", ExceptionUtils.getMessage(e));
             try {
                 driverType = configFileReader.getBrowser();

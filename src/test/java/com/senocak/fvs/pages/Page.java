@@ -282,6 +282,27 @@ public abstract class Page extends LoadableComponent<Page> {
     }
 
     /**
+     * Verify if the given element is present
+     * @param by the locator to find the element
+     * @return true if the element is present
+     */
+    public boolean isDisplayed(By by) {
+        try {
+            return getElement(by).isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Get the base url
+     * @return the base url
+     */
+    public String getUrlFromConfig(){
+        return configFileReader.getUrl();
+    }
+
+    /**
      * Get the screen shot of the current page
      * @return the screen shot
      */
@@ -297,13 +318,5 @@ public abstract class Page extends LoadableComponent<Page> {
         Set<String> logs = driver.manage().logs().getAvailableLogTypes();
         log.info("Logs are; " + logs);
         System.out.println(logs);
-    }
-
-    /**
-     * Get the base url
-     * @return the base url
-     */
-    public String getUrlFromConfig(){
-        return configFileReader.getUrl();
     }
 }

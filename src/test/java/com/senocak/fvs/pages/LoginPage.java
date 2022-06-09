@@ -34,7 +34,7 @@ public class LoginPage extends Page {
      * Input username
      * @param text username
      */
-    public void enterUsername(String text) {
+    public void enterEmail(String text) {
         log.info("Entering username");
         sendKeys(getElement(INPUT_USERNAME), text);
     }
@@ -54,6 +54,10 @@ public class LoginPage extends Page {
     public void clickLogin() {
         log.info("Clicking on login button");
         click(getElement(BUTTON_LOGIN));
+    }
+
+    public boolean verifyErrorMessage(String arg0) {
+        return isDisplayed(By.xpath("//div[contains(string(), '"+arg0+"')]"));
     }
 
     @Override protected void load() {

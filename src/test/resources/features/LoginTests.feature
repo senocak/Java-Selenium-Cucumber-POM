@@ -3,18 +3,32 @@ Feature: Login tests
   As Customer, I can login to fleetvaluationsystem.com
 
   @fail1
-  Scenario: Enter Credentials
-    Given going to "login" page
-    Given Enter username and password
-    | username | password  |
-    | anil     | anil      |
+  Scenario: I should be able to see the fail message
+    Given open login page
+    Given Enter email and password
+    | email | password  |
+    | lorem@ipsum.com | lorem |
     When Click login button
-    Then I should see dashboard page
+    Then I should see "Bad credentials!" message
 
-  @google
-  Scenario: Deneme
-    Given going to "home" page
-    And User enters search text as "Cosmosboard (@cosmos.board)"
-    When User clicks on Google Search button
-    Then Search Results is displayed
-    And Test retrieves details of "3" result
+  @fail2
+  Scenario: I should be able to see the fail message after entering wrong credentials twice
+    Given open login page
+    Given Enter email and password
+      | email | password  |
+      | lorem@ipsum.com | lorem |
+    When Click login button
+    Given Enter email and password
+      | email | password  |
+      | lorem@ipsum.com | lorem |
+    When Click login button
+    Then I should see "Bad credentials!" message
+
+  @success
+  Scenario: Happy path
+    Given open login page
+    Given Enter email and password
+      | email | password  |
+      | slogrzcddjvcfsykax@bvhrk.com | demo |
+    When Click login button
+    Then I should see "Login success.Please wait for redirect." message
