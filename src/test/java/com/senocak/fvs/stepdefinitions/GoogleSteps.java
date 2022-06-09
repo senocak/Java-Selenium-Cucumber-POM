@@ -1,41 +1,23 @@
 package com.senocak.fvs.stepdefinitions;
 
 import com.senocak.fvs.pages.GoogleHomePage;
-import com.senocak.fvs.pages.SearchResultsPage;
-import io.cucumber.java.After;
+import com.senocak.fvs.webdriver.DriverManager;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
-import java.util.Map;
 
 @Slf4j
 public class GoogleSteps {
     private GoogleHomePage googleHomePage;
-    private SearchResultsPage searchResultsPage;
 
     @Before
-    public void setUp() {
+    public void setup() {
+        log.info("Setting up web driver");
+        DriverManager.getDriver();
         googleHomePage = GoogleHomePage.getInstance();
-        searchResultsPage = SearchResultsPage.getInstance();
-    }
-
-    @After
-    public void tearDown() {
-        googleHomePage.closeDriver();
-    }
-
-    @Given("User launches a browser")
-    public void userLaunchesABrowser() {
-        googleHomePage.launchBrowser();
-    }
-
-    @And("User navigates to Google home page")
-    public void userNavigatesToGoogleHomePage() {
-        googleHomePage.navigateToGoogleHomePage();
     }
 
     @And("User enters search text as {string}")
@@ -50,15 +32,11 @@ public class GoogleSteps {
 
     @Then("Search Results is displayed")
     public void searchResultsIsDisplayed() {
-        Assert.assertTrue("Search Results are not displayed", searchResultsPage.isSearchResultsDisplayed());
+        Assert.assertTrue("Search Results are not displayed", googleHomePage.isSearchResultsDisplayed());
     }
 
     @And("Test retrieves details of {string} result")
-    public void testRetrievesResultsDetails(String nthResult) {
-        Map<String, String> searchResults = searchResultsPage.getSearchResults(nthResult);
-        log.info("Search Result Details: ");
-        for (String resultDetail : searchResults.keySet()) {
-            log.info("{} : {}", resultDetail, searchResults.get(resultDetail));
-        }
+    public void testRetrievesResultsDetails(String total) {
+        Assert.assertEquals(Integer.parseInt(total), googleHomePage.getSearchResults().size());
     }
 }

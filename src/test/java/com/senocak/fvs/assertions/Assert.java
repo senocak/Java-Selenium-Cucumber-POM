@@ -1,7 +1,7 @@
 package com.senocak.fvs.assertions;
 
-import com.senocak.fvs.pages.Page;
 import com.senocak.fvs.utility.Constants;
+import com.senocak.fvs.webdriver.DriverManager;
 import io.cucumber.core.exception.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -20,7 +20,8 @@ import java.time.Duration;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class Assert extends Page {
+public class Assert {
+    private static final WebDriver driver = DriverManager.getDriver();
 
     /**
      * This method is used to assert the text to be present in the element.
@@ -196,7 +197,4 @@ public class Assert extends Page {
     public static void assertElementInvisible(String errorMessage, By by) {
         waitUntil(ExpectedConditions.invisibilityOfElementLocated(by),errorMessage);
     }
-
-    @Override protected void load() {}
-    @Override protected void isLoaded() throws Error {}
 }

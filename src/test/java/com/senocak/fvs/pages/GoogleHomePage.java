@@ -4,14 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import java.util.List;
 
 @Slf4j
-public class GoogleHomePage extends Page{
+public class GoogleHomePage extends Page {
     private static final GoogleHomePage instance = new GoogleHomePage();
     private static final String GOOGLE_URL = "https://www.google.com/";
     private final By searchTextBox = By.name("q");
-    private final By searchButton = By.xpath("//span[@class='QCzoEc z1asCe MZy1Rb']//ancestor::div[5]//div[@class='FPdoLc lJ9FBc']//input[@value='Google Search']");
     private WebElement searchTextBoxElement;
+    private final By searchResults = By.id("result-stats");
 
     /**
      * Private constructor to prevent instantiation
@@ -47,9 +48,32 @@ public class GoogleHomePage extends Page{
     /**
      * Click on search button
      */
-    public void clickOnGoogleSearch(){
+    public void clickOnGoogleSearch() {
         log.info("Clicking on search button");
         sendKeys(searchTextBoxElement, Keys.ENTER);
+    }
+
+    /**
+     * Get the boolean value of the search results is displayed or not
+     * @return boolean value
+     */
+    public boolean isSearchResultsDisplayed() {
+        try {
+            log.info("Awaiting search results display");
+            getVisibleElement(searchResults);
+            return true;
+        } catch (Exception ex) {
+            log.info("Exception occurred. Search Results not displayed");
+        }
+        return false;
+    }
+
+    /**
+     * Get the search results
+     * @return List of search results
+     */
+    public List<WebElement> getSearchResults() {
+        return getElements(By.xpath("//div[@class='g tF2Cxc']"));
     }
 
     @Override protected void load() {}

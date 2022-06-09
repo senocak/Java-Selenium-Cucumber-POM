@@ -23,6 +23,9 @@ public class LoginPage extends Page {
         return instance;
     }
 
+    /**
+     * Redirect to Login Page
+     */
     public void homePage(){
         get(getUrlFromConfig() + "/login");
     }
@@ -56,7 +59,7 @@ public class LoginPage extends Page {
     @Override protected void load() {
         System.out.println("LoginPage load");
     }
-    @Override protected void isLoaded() throws Error {
+    @Override protected void isLoaded() {
         System.out.println("LoginPage isLoaded");
     }
 }

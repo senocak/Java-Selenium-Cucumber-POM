@@ -1,11 +1,9 @@
 package com.senocak.fvs.pages;
 
 import com.senocak.fvs.config.ConfigFileReader;
-import com.senocak.fvs.utility.Enums.DriverType;
 import com.senocak.fvs.utility.Constants;
-import io.github.bonigarcia.wdm.WebDriverManager;
+import com.senocak.fvs.webdriver.DriverManager;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementClickInterceptedException;
@@ -22,134 +20,21 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.touch.TouchActions;
-import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.LoadableComponent;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 @Slf4j
-public abstract class Page extends LoadableComponent {
+public abstract class Page extends LoadableComponent<Page> {
     private static final ConfigFileReader configFileReader = ConfigFileReader.getInstance();
-    protected static WebDriver driver;
-
-    /**
-     * Launch the browser
-     */
-    public WebDriver launchBrowser() {
-        if (driver != null)
-            closeDriver();
-        switch (configFileReader.getEnvironment()) {
-            case LOCAL:
-                driver = createLocalDriver();
-                break;
-            case REMOTE:
-            default:
-                createRemoteDriver();
-                break;
-        }
-        return driver;
-    }
-
-    /**
-     * Create local driver instance
-     * @return web driver instance
-     */
-    private WebDriver createLocalDriver() {
-        String BROWSER = System.getProperty("BROWSER");
-        DriverType driverType;
-        try {
-            driverType = DriverType.valueOf(BROWSER.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            log.error("Browser name not matched. Exception: {}", ExceptionUtils.getMessage(e));
-            try {
-                driverType = configFileReader.getBrowser();
-            }catch (RuntimeException ex) {
-                log.error("Error loading config.properties file: {}", ExceptionUtils.getMessage(e));
-                log.info("Default browser will be used: {}", DriverType.CHROME.name());
-                driverType = DriverType.CHROME;
-            }
-        }
-        String headlessProperty = System.getProperty("HEADLESS");
-        List<String> args = new ArrayList<>();
-        args.add("--disable-gpu");
-        args.add("--disable-extensions");
-        args.add("--no-sandbox");
-        if (headlessProperty != null && headlessProperty.equals("true")) {
-            args.add("--headless");
-        }
-        String[] arguments = new String[args.size()];
-        arguments = args.toArray(arguments);
-
-        log.info("Browser: {}, arguments: {}", driverType.name(), Arrays.toString(arguments));
-        switch (driverType) {
-            case CHROME:
-                WebDriverManager.chromedriver().setup();
-                ChromeOptions chromeOptions = new ChromeOptions();
-                chromeOptions.addArguments(arguments);
-                driver = new ChromeDriver(chromeOptions);
-                break;
-            case FIREFOX:
-                WebDriverManager.firefoxdriver().setup();
-                FirefoxOptions firefoxOptions = new FirefoxOptions();
-                firefoxOptions.addArguments(arguments);
-                driver = new FirefoxDriver(firefoxOptions);
-                break;
-            case EDGE:
-                WebDriverManager.edgedriver().setup();
-                EdgeOptions options = new EdgeOptions();
-                options.addArguments(arguments);
-                driver = new EdgeDriver(options);
-                break;
-            case SAFARI:
-                WebDriverManager.safaridriver().setup();
-                driver = new SafariDriver();
-                break;
-        }
-        long time = configFileReader.getTime();
-
-        driver.manage().deleteAllCookies();
-        driver.manage().window().maximize();
-        Duration duration = Duration.ofSeconds(time);
-        driver.manage().timeouts().implicitlyWait(duration);
-        driver.manage().timeouts().pageLoadTimeout(duration);
-        driver.manage().timeouts().setScriptTimeout(duration);
-        return driver;
-    }
-
-    /**
-     * Create remote driver instance
-     * @return web driver instance
-     */
-    private WebDriver createRemoteDriver() {
-        throw new RuntimeException("Remote web driver is not yet implemented");
-    }
-
-    /**
-     * End the current session
-     */
-    public void closeDriver() {
-        try {
-            driver.close();
-            driver.quit();
-        } catch (Exception e) {
-            log.error("Error closing driver. Exception: {}" + ExceptionUtils.getMessage(e));
-        }
-    }
+    protected static WebDriver driver = DriverManager.getDriver();
 
     /**
      * Redirect to the given url
@@ -169,7 +54,7 @@ public abstract class Page extends LoadableComponent {
     public <P, T> void sendKeys(P p, T t) {
         sleepms(Constants.USER_WAIT_IN_MS);
         if ((p == null))
-            throw new NotFoundException(p + "is null");
+            throw new NotFoundException("Element not found");
         else if (!(p instanceof WebElement) && !(p instanceof By))
             throw new InvalidArgumentException(p + "parameter type not supported by this function");
 
@@ -188,7 +73,7 @@ public abstract class Page extends LoadableComponent {
                 el = ((WebElement) p);
             }
 
-            log.info("************Typing on ************** " + el + " " + t);
+            log.info("************Typing on ************** Element: {}, Text: {}", el, t);
             if (t instanceof String) {
                 el.clear();
                 el.sendKeys(((String) t));
@@ -216,7 +101,7 @@ public abstract class Page extends LoadableComponent {
                 .ignoring(WebDriverException.class)
                 .ignoring(ElementClickInterceptedException.class);
         wait.until(driver -> {
-            WebElement el = null;
+            WebElement el;
             if (p instanceof By) {
                 el = driver.findElement((By) p);
             } else if (p instanceof WebElement) {
@@ -414,7 +299,10 @@ public abstract class Page extends LoadableComponent {
         System.out.println(logs);
     }
 
-
+    /**
+     * Get the base url
+     * @return the base url
+     */
     public String getUrlFromConfig(){
         return configFileReader.getUrl();
     }

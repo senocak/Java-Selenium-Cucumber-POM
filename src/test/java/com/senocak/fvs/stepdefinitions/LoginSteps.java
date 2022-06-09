@@ -1,41 +1,36 @@
 package com.senocak.fvs.stepdefinitions;
 
 import com.senocak.fvs.pages.LoginPage;
-import io.cucumber.java.After;
+import com.senocak.fvs.webdriver.DriverManager;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.openqa.selenium.WebDriver;
+import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Map;
 
+@Slf4j
 public class LoginSteps {
-    private static LoginPage loginPage;
-    WebDriver webDriver;
+    private LoginPage loginPage;
 
     @Before
-    public void setUp() {
+    public void setup() {
+        log.info("Setting up web driver");
+        DriverManager.getDriver();
         loginPage = LoginPage.getInstance();
     }
 
-    @After
-    public void tearDown() {
-        loginPage.closeDriver();
-    }
-
-    @Given("Open browser and go to homepage")
-    public void openBrowserAndGoToHomepage() {
-        webDriver = loginPage.launchBrowser();
-        loginPage.homePage();
-    }
-
-    @Given("Enter username")
-    public void enterUsername() {
-        loginPage.enterUsername("anil123");
-    }
-
-    @Given("Enter password")
-    public void enterPassword() {
-        loginPage.enterPassword("senocakdlkansdlkjasndajsdlkıas");
+    @Given("Enter username and password")
+    public void enterUsernameAndPassword(DataTable dataTable) {
+        List<Map<String,String>> dataRow = dataTable.asMaps(String.class,String.class);
+        if (dataRow.size() > 1) {
+            log.error("Only one row is allowed. Size: {}", dataRow.size());
+            throw new RuntimeException("Only one row is allowed");
+        }
+        loginPage.enterUsername(dataRow.get(0).get("username"));
+        loginPage.enterPassword(dataRow.get(0).get("password"));
     }
 
     @When("Click login button")
@@ -47,10 +42,5 @@ public class LoginSteps {
     public void iShouldSeeDashboardPage() {
         //Assert.assertTrue(loginPage.dashboardPageIsDisplayed());
         System.out.println("dashboard page is displayed");
-    }
-
-    @Given("Login page is displayed")
-    public void loginPageIsDisplayed() {
-        System.out.println("login page is displayed");
     }
 }
