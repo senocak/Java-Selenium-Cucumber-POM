@@ -4,23 +4,26 @@ import com.senocak.fvs.utility.Enums.DriverType;
 import com.senocak.fvs.utility.Enums.EnvironmentType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.Properties;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import java.io.InputStream;
+import java.util.List;
 
 @Slf4j
 public class ConfigFileReader {
-    private static ConfigFileReader instance;
-    private final Properties properties = new Properties();
+    private static final ConfigFileReader instance = new ConfigFileReader();
+    private static Config config;
 
     /**
      * Constructor to initialize the properties file
      */
     private ConfigFileReader() {
         try {
-            properties.load(ConfigFileReader.class.getResourceAsStream("/config.properties"));
-        } catch (IOException e) {
-            log.error("Error loading config.properties file: {}", ExceptionUtils.getMessage(e));
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("config.yaml");
+            config = (new Yaml(new Constructor(Config.class))).load(inputStream);
+            System.out.println(config);
+        } catch (Exception e) {
+            log.error("Error loading config.yaml file: {}", ExceptionUtils.getMessage(e));
             throw new RuntimeException("configuration.properties not found");
         }
     }
@@ -30,15 +33,15 @@ public class ConfigFileReader {
      * @return instance of ConfigFileReader
      */
     public static ConfigFileReader getInstance() {
-        return instance == null ? new ConfigFileReader() : instance;
+        return instance;
     }
 
     /**
-     * Get the instance of Properties
-     * @return Properties
+     * Get the instance of Config
+     * @return Config instance
      */
-    public Properties getProperties() {
-        return properties;
+    public Config getConfig() {
+        return config;
     }
 
     /**
@@ -46,8 +49,7 @@ public class ConfigFileReader {
      * @return value of the property
      */
     public DriverType getBrowser() {
-        String browserName = getPropertyValue("browser");
-
+        String browserName = config.getBrowser();
         switch (browserName) {
             case "chrome":
                 return DriverType.CHROME;
@@ -68,7 +70,7 @@ public class ConfigFileReader {
      * @return EnvironmentType
      */
     public EnvironmentType getEnvironment() {
-        String environmentName = getPropertyValue("environment");
+        String environmentName = config.getEnvironment();
 
         switch (environmentName) {
             case "local":
@@ -86,7 +88,7 @@ public class ConfigFileReader {
      * @return the value of the property
      */
     public String getUrl() {
-        return getPropertyValue("url");
+        return config.getUrl();
     }
 
     /**
@@ -94,22 +96,14 @@ public class ConfigFileReader {
      * @return the value of the property
      */
     public long getTime() {
-        return Long.parseLong(getPropertyValue("timeout"));
+        return Long.parseLong(config.getTimeout());
     }
 
     /**
      * Get the value of a property
-     * @param prop the property to get
      * @return the value of the property
      */
-    private String getPropertyValue(String prop) {
-        log.info("Getting value for " + prop);
-        Optional<String> opt = Optional.ofNullable(properties.getProperty(prop));
-        if (opt.isPresent()) {
-            log.info("id for " + prop + " is " + opt.get());
-            return opt.get();
-        }
-        log.error("No value found for {}", prop);
-        throw new RuntimeException("url not specified in the config file.");
+    public List<Users> getUsers() {
+        return config.getUsers();
     }
 }

@@ -23,8 +23,8 @@ import java.util.Objects;
 
 @Slf4j
 public class DriverManager {
-    private static WebDriver driver;
     private static final ConfigFileReader configFileReader = ConfigFileReader.getInstance();
+    private static WebDriver driver;
 
     /**
      * Private constructor to prevent instantiation.
@@ -65,7 +65,7 @@ public class DriverManager {
             try {
                 driverType = configFileReader.getBrowser();
             }catch (RuntimeException ex) {
-                log.error("Error loading config.properties file: {}", ExceptionUtils.getMessage(e));
+                log.error("Error loading config.yaml file: {}", ExceptionUtils.getMessage(e));
                 log.info("Default browser will be used: {}", DriverType.CHROME.name());
                 driverType = DriverType.CHROME;
             }

@@ -56,7 +56,12 @@ public class LoginPage extends Page {
         click(getElement(BUTTON_LOGIN));
     }
 
-    public boolean verifyErrorMessage(String arg0) {
+    /**
+     * Verify if alert is displayed
+     * @param arg0 alert text
+     * @return true if alert is displayed
+     */
+    public boolean verifyPopupMessage(String arg0) {
         return isDisplayed(By.xpath("//div[contains(string(), '"+arg0+"')]"));
     }
 

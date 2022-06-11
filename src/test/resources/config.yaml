@@ -1,0 +1,9 @@
+url: https://fleetvaluationsystem.com
+timeout: 12
+browser: chrome
+environment: local
+users:
+  - username: "mobile"
+    password: 123456789
+  - username: "landline"
+    password: 456786868
