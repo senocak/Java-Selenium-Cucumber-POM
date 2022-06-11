@@ -316,7 +316,6 @@ public abstract class Page extends LoadableComponent<Page> {
      */
     public void getLogs() {
         Set<String> logs = driver.manage().logs().getAvailableLogTypes();
-        log.info("Logs are; " + logs);
-        System.out.println(logs);
+        log.info("Logs: {}", logs);
     }
 }

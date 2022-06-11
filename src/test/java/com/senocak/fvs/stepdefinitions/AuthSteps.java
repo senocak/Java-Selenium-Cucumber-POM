@@ -1,7 +1,9 @@
 package com.senocak.fvs.stepdefinitions;
 
+import com.senocak.fvs.config.User;
 import com.senocak.fvs.pages.ForgotPasswordPage;
 import com.senocak.fvs.pages.LoginPage;
+import com.senocak.fvs.utility.Constants;
 import com.senocak.fvs.webdriver.DriverManager;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
@@ -10,6 +12,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import java.util.List;
 import java.util.Map;
@@ -39,14 +42,21 @@ public class AuthSteps {
     }
 
     @Given("Enter email and password")
-    public void enter_email_and_password(DataTable dataTable) {
+    public void enter_email_and_password(@NotNull DataTable dataTable) {
         List<Map<String,String>> dataRow = dataTable.asMaps(String.class,String.class);
         if (dataRow.size() != 1) {
             log.error("Only one row is allowed. Size: {}", dataRow.size());
-            throw new RuntimeException("Only one row is allowed");
+            throw new RuntimeException("Only one row is allowed. Size: " + dataRow.size());
         }
-        loginPage.enterEmail(dataRow.get(0).get("email"));
-        loginPage.enterPassword(dataRow.get(0).get("password"));
+        String email = dataRow.get(0).get("email");
+        User extractedUser = Constants.extractUserFromString(email);
+        email = extractedUser != null ? extractedUser.getEmail() : email;
+        loginPage.enterEmail(email);
+
+        String password = dataRow.get(0).get("password");
+        User extractedPassword = Constants.extractUserFromString(password);
+        password = extractedPassword != null ? extractedPassword.getPassword() : password;
+        loginPage.enterPassword(password);
     }
 
     @When("Click login button")
@@ -66,6 +76,10 @@ public class AuthSteps {
 
     @Given("Enter {string} for reset password")
     public void enterForResetPassword(String arg0) {
+        User extracted = Constants.extractUserFromString(arg0);
+        if (extracted != null) {
+            arg0 = extracted.getEmail();
+        }
         forgotPasswordPage.enterEmail(arg0);
     }
 

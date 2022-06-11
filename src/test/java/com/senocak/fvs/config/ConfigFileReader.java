@@ -21,7 +21,7 @@ public class ConfigFileReader {
         try {
             InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("config.yaml");
             config = (new Yaml(new Constructor(Config.class))).load(inputStream);
-            System.out.println(config);
+            log.debug("Config file loaded successfully. Config: {}", config.toString());
         } catch (Exception e) {
             log.error("Error loading config.yaml file: {}", ExceptionUtils.getMessage(e));
             throw new RuntimeException("configuration.properties not found");
@@ -103,7 +103,7 @@ public class ConfigFileReader {
      * Get the value of a property
      * @return the value of the property
      */
-    public List<Users> getUsers() {
+    public List<User> getUsers() {
         return config.getUsers();
     }
 }

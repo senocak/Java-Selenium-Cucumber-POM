@@ -47,9 +47,9 @@ public class ForgotPasswordPage extends Page {
     }
 
     @Override protected void load() {
-        System.out.println("LoginPage load");
+        log.debug("Loading ForgotPasswordPage");
     }
     @Override protected void isLoaded() {
-        System.out.println("LoginPage isLoaded");
+        log.debug("ForgotPasswordPage is loaded");
     }
 }

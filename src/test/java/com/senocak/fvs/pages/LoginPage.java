@@ -66,9 +66,9 @@ public class LoginPage extends Page {
     }
 
     @Override protected void load() {
-        System.out.println("LoginPage load");
+        log.debug("Loading LoginPage");
     }
     @Override protected void isLoaded() {
-        System.out.println("LoginPage isLoaded");
+        log.debug("LoginPage is loaded");
     }
 }
