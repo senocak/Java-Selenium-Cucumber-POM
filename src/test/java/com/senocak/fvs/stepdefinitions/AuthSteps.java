@@ -8,32 +8,41 @@ import com.senocak.fvs.webdriver.DriverManager;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
+import org.openqa.selenium.WebDriver;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
 public class AuthSteps {
+    private final DriverManager driverManager = DriverManager.getInstance();
+    private static WebDriver driver;
     private LoginPage loginPage;
     private ForgotPasswordPage forgotPasswordPage;
 
     @Before
     public void setup() {
         log.info("Setting up web driver");
-        DriverManager.getDriver();
-        loginPage = LoginPage.getInstance();
-        forgotPasswordPage = ForgotPasswordPage.getInstance();
+        driver = driverManager.getDriver();
+        loginPage = LoginPage.getInstance(driver);
+        forgotPasswordPage = ForgotPasswordPage.getInstance(driver);
     }
 
     @After
-    public void tearDown() {
+    public void tearDown(Scenario scenario) {
         log.info("Tearing down web driver");
-        //DriverManager.closeDriver();
+        if (scenario.isFailed()) {
+            log.debug("Scenario failed, taking screenshot");
+            scenario.attach(driverManager.getScreenshot(), "image/png", "Screenshot");
+        }
+        driverManager.getLogs();
+        driverManager.closeDriver();
     }
 
     @Given("open login page")

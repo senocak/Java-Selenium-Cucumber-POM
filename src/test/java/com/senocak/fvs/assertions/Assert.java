@@ -1,7 +1,6 @@
 package com.senocak.fvs.assertions;
 
 import com.senocak.fvs.utility.Constants;
-import com.senocak.fvs.webdriver.DriverManager;
 import io.cucumber.core.exception.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -21,7 +20,15 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public class Assert {
-    private static final WebDriver driver = DriverManager.getDriver();
+    private static WebDriver driver;
+
+    /**
+     * Constructor
+     * @param wd WebDriver instance
+     */
+    public Assert(WebDriver wd) {
+        driver = wd;
+    }
 
     /**
      * This method is used to assert the text to be present in the element.

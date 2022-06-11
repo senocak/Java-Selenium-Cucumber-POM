@@ -2,7 +2,7 @@
 Feature: Login tests
   This is a feature of the authentication module.
 
-  @login-fail1
+  @login-fail
   @fail
   Scenario: I should be able to see the fail message when I login with wrong credentials
     Given open login page
@@ -12,7 +12,7 @@ Feature: Login tests
     When Click login button
     Then I should see "Bad credentials!" message
 
-  @login-fail2
+  @login-fail
   @fail
   Scenario: I should be able to see the fail message after entering wrong credentials twice
     Given open login page
@@ -32,11 +32,11 @@ Feature: Login tests
     Given open login page
     Given Enter email and password
       | email           | password          |
-      | @user.email[1]  | @user.password[5] |
+      | @user.email[1]  | @user.password[1] |
     When Click login button
     Then I should see "Login success.Please wait for redirect." message
 
-  @forgot-password-fail1
+  @forgot-password-fail
   @fail
   Scenario: I should be able to see the fail message after entering wrong email
     Given open forgot password page
@@ -44,7 +44,7 @@ Feature: Login tests
     When Click send reset button
     Then I should see "User not found!" message
 
-  @forgot-password-fail2
+  @forgot-password-fail
   @fail
   Scenario: I should be able to see the alert message after entering invalid email type
     Given open forgot password page

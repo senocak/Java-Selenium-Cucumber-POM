@@ -20,3 +20,4 @@ When this project is integrated in a Jenkins pipeline, _cucumber.json_ file in _
 
 
 
+mvn -DHEADLESS=true -DBROWSER=edge verify -Dcucumber.filter.tags=@forgot-password-success

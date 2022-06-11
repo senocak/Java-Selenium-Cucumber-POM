@@ -34,7 +34,7 @@ import java.util.Set;
 @Slf4j
 public abstract class Page extends LoadableComponent<Page> {
     private static final ConfigFileReader configFileReader = ConfigFileReader.getInstance();
-    protected static WebDriver driver = DriverManager.getDriver();
+    protected static WebDriver driver;
 
     /**
      * Redirect to the given url
@@ -302,20 +302,4 @@ public abstract class Page extends LoadableComponent<Page> {
         return configFileReader.getUrl();
     }
 
-    /**
-     * Get the screen shot of the current page
-     * @return the screen shot
-     */
-    public byte[] getScreenshot() {
-        log.info("Capturing screenshot");
-        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-    }
-
-    /**
-     * Get the logs for the current page
-     */
-    public void getLogs() {
-        Set<String> logs = driver.manage().logs().getAvailableLogTypes();
-        log.info("Logs: {}", logs);
-    }
 }

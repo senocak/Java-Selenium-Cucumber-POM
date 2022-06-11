@@ -17,7 +17,6 @@ import org.junit.runner.RunWith;
     publish = true,
     glue = {
         "com.senocak.fvs.stepdefinitions"
-    },
-    dryRun = true
+    }
 )
 public class TestRunner {}

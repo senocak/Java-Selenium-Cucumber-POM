@@ -2,6 +2,7 @@ package com.senocak.fvs.pages;
 
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 
 @Slf4j
 public class ForgotPasswordPage extends Page {
@@ -18,7 +19,8 @@ public class ForgotPasswordPage extends Page {
      * Singleton instance of SearchResultsPage
      * @return SearchResultsPage instance
      */
-    public static ForgotPasswordPage getInstance() {
+    public static ForgotPasswordPage getInstance(WebDriver wd) {
+        driver = wd;
         return instance;
     }
 

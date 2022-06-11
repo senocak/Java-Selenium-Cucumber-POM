@@ -6,6 +6,8 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -20,22 +22,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Slf4j
 public class DriverManager {
+    private static final DriverManager instance = new DriverManager();
     private static final ConfigFileReader configFileReader = ConfigFileReader.getInstance();
-    private static WebDriver driver;
+    private WebDriver driver;
 
     /**
      * Private constructor to prevent instantiation.
      */
     private DriverManager() {}
 
+    public static DriverManager getInstance() {
+        return instance;
+    }
+
     /**
      * Returns a web driver instance.
      * @return WebDriver instance.
      */
-    public static WebDriver getDriver() {
+    public WebDriver getDriver() {
         if (Objects.isNull(driver)) {
             log.info("Thread has no WedDriver, creating new one");
             switch (configFileReader.getEnvironment()) {
@@ -54,7 +62,7 @@ public class DriverManager {
     /**
      * Create local driver instance
      */
-    private static WebDriver createLocalDriver() {
+    private WebDriver createLocalDriver() {
         WebDriver driver = null;
         String BROWSER = System.getProperty("BROWSER");
         DriverType driverType;
@@ -114,8 +122,8 @@ public class DriverManager {
         driver.manage().timeouts().implicitlyWait(duration);
         driver.manage().timeouts().pageLoadTimeout(duration);
         driver.manage().timeouts().setScriptTimeout(duration);
-        DriverManager.driver = driver;
-        return DriverManager.driver;
+        this.driver = driver;
+        return this.driver;
     }
 
     /**
@@ -131,21 +139,41 @@ public class DriverManager {
      * This method is used in the the *WebDriverListeners to change the test name.
      * @return String containing browser info.
      */
-    public static String getRemoteWebDriverInfo() {
+    public String getRemoteWebDriverInfo() {
         log.debug("Getting remote web driver info");
-        Capabilities cap = ((RemoteWebDriver) DriverManager.getDriver()).getCapabilities();
+        Capabilities cap = ((RemoteWebDriver) this.driver).getCapabilities();
         return "BrowserInfo: " + cap.getBrowserName() + " " + cap.getBrowserVersion() + " " + cap.getPlatformName().toString();
+    }
+
+    /**
+     * Get the screen shot of the current page
+     * @return the screen shot
+     */
+    public byte[] getScreenshot() {
+        log.info("Capturing screenshot");
+        getLogs();
+        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+    }
+
+    /**
+     * Get the logs for the current page
+     */
+    public void getLogs() {
+        Set<String> logs = driver.manage().logs().getAvailableLogTypes();
+        for (String l : logs) {
+            log.info("Log entry: {}", l);
+        }
     }
 
     /**
      * End the current session
      */
-    public static void closeDriver() {
+    public void closeDriver() {
         try {
             log.info("Closing driver");
-            if (Objects.nonNull(driver)) {
-                driver.quit();
-                driver.close();
+            if (Objects.nonNull(this.driver)) {
+                this.driver.quit();
+                this.driver.close();
             }
         } catch (Exception e) {
             log.error("Error closing driver. Exception: {}" + ExceptionUtils.getMessage(e));
