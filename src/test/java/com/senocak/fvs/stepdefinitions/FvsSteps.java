@@ -118,7 +118,7 @@ public class FvsSteps {
         User extractedName = Constants.extractUserFromString(name);
         name = extractedName != null ? extractedName.getName() : name;
 
-        String surname = dataRow.get(0).get("email");
+        String surname = dataRow.get(0).get("surname");
         User extractedSurname = Constants.extractUserFromString(surname);
         surname = extractedSurname != null ? extractedSurname.getSurname() : surname;
 
@@ -126,11 +126,11 @@ public class FvsSteps {
         User extractedUser = Constants.extractUserFromString(email);
         email = extractedUser != null ? extractedUser.getEmail() : email;
 
-        String company = dataRow.get(0).get("email");
+        String company = dataRow.get(0).get("company");
         User extractedCompany = Constants.extractUserFromString(company);
         company = extractedCompany != null ? extractedCompany.getCompany() : company;
 
-        String location = dataRow.get(0).get("email");
+        String location = dataRow.get(0).get("location");
         User extractedLocation = Constants.extractUserFromString(location);
         location = extractedLocation != null ? extractedLocation.getLocation() : location;
 

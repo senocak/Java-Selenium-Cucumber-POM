@@ -5,7 +5,7 @@ Feature: Login tests
   @login-fail
   @fail
   Scenario: I should be able to see the fail message when I login with wrong credentials
-    Given open login page
+    Given open "login" page
     Given Enter email and password
     | email           | password  |
     | lorem@ipsum.com | lorem     |

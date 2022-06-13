@@ -3,6 +3,7 @@ package com.senocak.fvs.pages;
 import com.senocak.fvs.config.ConfigFileReader;
 import com.senocak.fvs.utility.Constants;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementClickInterceptedException;
@@ -126,7 +127,7 @@ public abstract class Page extends LoadableComponent<Page> {
      * Clear the input of the given element
      * @param el element to clear the input of
      */
-    protected void clearInput(WebElement el) {
+    protected void clearInput(@NotNull WebElement el) {
         el.clear();
         el.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
     }
