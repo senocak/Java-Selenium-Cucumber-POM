@@ -2,7 +2,6 @@ package com.senocak.fvs.pages;
 
 import com.senocak.fvs.config.ConfigFileReader;
 import com.senocak.fvs.utility.Constants;
-import com.senocak.fvs.webdriver.DriverManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -13,9 +12,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NotFoundException;
-import org.openqa.selenium.OutputType;
 import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -29,7 +26,6 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 public abstract class Page extends LoadableComponent<Page> {
@@ -74,8 +70,8 @@ public abstract class Page extends LoadableComponent<Page> {
             }
 
             log.info("************Typing on ************** Element: {}, Text: {}", el, t);
+            clearInput(el);
             if (t instanceof String) {
-                el.clear();
                 el.sendKeys(((String) t));
             } else if (t instanceof Keys) {
                 el.sendKeys(((Keys) t));
@@ -124,6 +120,15 @@ public abstract class Page extends LoadableComponent<Page> {
             return el;
         });
         sleepms(Constants.USER_WAIT_IN_MS);
+    }
+
+    /**
+     * Clear the input of the given element
+     * @param el element to clear the input of
+     */
+    protected void clearInput(WebElement el) {
+        el.clear();
+        el.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
     }
 
     /**
@@ -240,6 +245,15 @@ public abstract class Page extends LoadableComponent<Page> {
     }
 
     /**
+     * Get the visible web elements for the given locator by text contains
+     * @param text the text to find the elements
+     * @return the web elements
+     */
+    protected WebElement getElementByContainsText(String text){
+        return getElement(By.xpath("//*[contains(text(),'"+text+"')]"));
+    }
+
+    /**
      * Get the last visible web element for the given locator
      * @param by the locator to find the element
      * @return the web element
@@ -283,12 +297,19 @@ public abstract class Page extends LoadableComponent<Page> {
 
     /**
      * Verify if the given element is present
-     * @param by the locator to find the element
+     * @param t the web element to verify
      * @return true if the element is present
      */
-    public boolean isDisplayed(By by) {
+    public <T> boolean isDisplayed(T t) {
         try {
-            return getElement(by).isDisplayed();
+            if (t instanceof WebElement) {
+                log.debug("Element is WebElement. Checking if it is displayed");
+                return ((WebElement) t).isDisplayed();
+            } else if (t instanceof By) {
+                log.debug("Element is By. Checking if it is displayed");
+                return getElement((By) t).isDisplayed();
+            }
+            throw new NoSuchElementException("Unknown type of element");
         } catch (NoSuchElementException e) {
             return false;
         }
@@ -301,5 +322,4 @@ public abstract class Page extends LoadableComponent<Page> {
     public String getUrlFromConfig(){
         return configFileReader.getUrl();
     }
-
 }

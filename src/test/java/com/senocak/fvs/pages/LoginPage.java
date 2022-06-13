@@ -64,7 +64,7 @@ public class LoginPage extends Page {
      * @return true if alert is displayed
      */
     public boolean verifyPopupMessage(String arg0) {
-        return isDisplayed(By.xpath("//div[contains(string(), '"+arg0+"')]"));
+        return isDisplayed(getElementByContainsText(arg0));
     }
 
     @Override protected void load() {

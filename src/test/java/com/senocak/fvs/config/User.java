@@ -8,6 +8,10 @@ import lombok.ToString;
 @Setter
 @ToString
 public class User {
+    String name;
+    String surname;
     String email;
     String password;
+    String company;
+    String location;
 }

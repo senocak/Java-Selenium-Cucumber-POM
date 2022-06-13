@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum PageType {
     LOGIN("login"),
-    HOME("home");
+    FORGOT_PASSWORD("forgot-password"),
+    PROFILE("profile");
 
     private final String isim;
 

@@ -3,5 +3,9 @@ timeout: 12
 browser: chrome
 environment: local
 users:
-  - email: gmsqtggrwxfdrsnzxd@bvhrs.com
+  - name: Selenium
+    surname: Cucumber
+    email: gmsqtggrwxfdrsnzxd@bvhrs.com
     password: demo
+    company: CompanyOne
+    location: LocationOne
