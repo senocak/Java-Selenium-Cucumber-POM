@@ -76,7 +76,7 @@ public abstract class Page extends LoadableComponent<Page> {
             } else if (t instanceof Keys) {
                 el.sendKeys(((Keys) t));
             }
-            sleepms(500);
+            sleepms(Constants.USER_WAIT_IN_MS);
             return el;
         });
     }
@@ -180,7 +180,7 @@ public abstract class Page extends LoadableComponent<Page> {
                     return;
                 }
                 log.info("****************waiting for page to be in ready state***********: " + i);
-                sleepms(1000);
+                sleepms(Constants.USER_WAIT_IN_MS);
                 i++;
             } catch (WebDriverException e) {
                 log.info("WebDriverException: " + e.getMessage());
