@@ -6,6 +6,7 @@ import com.senocak.fvs.pages.LoginPage;
 import com.senocak.fvs.pages.ProfilePage;
 import com.senocak.fvs.utility.Constants;
 import com.senocak.fvs.utility.Enums.PageType;
+import com.senocak.fvs.utility.zulip.ZulipClient;
 import com.senocak.fvs.webdriver.DriverManager;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
@@ -28,6 +29,7 @@ public class FvsSteps {
     private LoginPage loginPage;
     private ForgotPasswordPage forgotPasswordPage;
     private ProfilePage profilePage;
+    private ZulipClient zulipClient;
 
     @Before
     public void setup() {
@@ -36,6 +38,7 @@ public class FvsSteps {
         loginPage = LoginPage.getInstance(driver);
         forgotPasswordPage = ForgotPasswordPage.getInstance(driver);
         profilePage = ProfilePage.getInstance(driver);
+        zulipClient = ZulipClient.getInstance();
     }
 
     @After
@@ -45,6 +48,7 @@ public class FvsSteps {
             log.debug("Scenario failed, taking screenshot");
             scenario.attach(driverManager.getScreenshot(), "image/png", "Screenshot");
         }
+        zulipClient.createReport(scenario);
         driverManager.getLogs();
         driverManager.closeDriver();
     }

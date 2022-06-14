@@ -59,6 +59,11 @@
             <version>17.0.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>io.taliox</groupId>
+            <artifactId>zulip-java-rest</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

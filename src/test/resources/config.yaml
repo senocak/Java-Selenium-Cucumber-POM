@@ -9,3 +9,7 @@ users:
     password: demo
     company: CompanyOne
     location: LocationOne
+zulip:
+  userName: anil@bilgimedya.com.tr
+  password: RDYIHg3iRk91ophq05r6W2PaGICBy8MZ
+  serverURL: https://meet.cosmosboard.com

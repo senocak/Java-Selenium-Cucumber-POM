@@ -1,5 +1,6 @@
 package com.senocak.fvs.config;
 
+import com.senocak.fvs.utility.zulip.model.Zulip;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,4 +15,5 @@ public class Config {
     String browser;
     String environment;
     List<User> users;
+    Zulip zulip;
 }

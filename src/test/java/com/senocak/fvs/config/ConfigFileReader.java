@@ -2,6 +2,7 @@ package com.senocak.fvs.config;
 
 import com.senocak.fvs.utility.Enums.DriverType;
 import com.senocak.fvs.utility.Enums.EnvironmentType;
+import com.senocak.fvs.utility.zulip.model.Zulip;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.yaml.snakeyaml.Yaml;
@@ -105,5 +106,13 @@ public class ConfigFileReader {
      */
     public List<User> getUsers() {
         return config.getUsers();
+    }
+
+    /**
+     * Get the zulip instance
+     * @return the value of the property
+     */
+    public Zulip getZulip() {
+        return config.getZulip();
     }
 }
