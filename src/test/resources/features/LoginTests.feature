@@ -38,19 +38,19 @@ Feature: Login tests
 
   @forgot-password-fail
   @fail
-  Scenario: I should be able to see the fail message after entering wrong email
-    Given open "forgot-password" page
-    Given Enter "lorem@ipsum.com" for reset password
-    When Click send reset button
-    Then I should see "User not found!" message
-
-  @forgot-password-fail
-  @fail
   Scenario: I should be able to see the alert message after entering invalid email type
     Given open "forgot-password" page
     Given Enter "lorem" for reset password
     When Click send reset button
     Then I should see "Invalid email" message
+
+  @forgot-password-success
+  @success
+  Scenario: I should be able to see the fail message after entering wrong email
+    Given open "forgot-password" page
+    Given Enter "lorem@ipsum.com" for reset password
+    When Click send reset button
+    Then I should see "User not found!" message
 
   @forgot-password-success
   @success

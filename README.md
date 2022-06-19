@@ -32,9 +32,25 @@ Automation Framework for Web Application tests using Cucumber and Selenium
 
 ## Execution Instructions
 - `mvn -DHEADLESS=true -DBROWSER=edge verify -Dcucumber.filter.tags=@login-fail`
-- `mvn -DHEADLESS=false -DBROWSER=edge verify -Dcucumber.filter.tags=@login`
-- `mvn -DHEADLESS=false -DBROWSER=edge verify -Dcucumber.filter.tags=@login`
+- `mvn -DHEADLESS=false -DBROWSER=chrome verify -Dcucumber.filter.tags=@login`
+- `mvn -DHEADLESS=false -DBROWSER=firefox verify -Dcucumber.filter.tags=@login`
 - `java -Dmaven.multiModuleProjectDirectory=C:\Users\asenocak\Desktop\calisma\Java-Selenium-Cucumber-POM "-Dmaven.home=C:\Program Files\JetBrains\IntelliJ IDEA 2022.1.1\plugins\maven\lib\maven3" "-Dclassworlds.conf=C:\Program Files\JetBrains\IntelliJ IDEA 2022.1.1\plugins\maven\lib\maven3\bin\m2.conf" "-Dmaven.ext.class.path=C:\Program Files\JetBrains\IntelliJ IDEA 2022.1.1\plugins\maven\lib\maven-event-listener.jar" -Dfile.encoding=UTF-8 -classpath "C:\Program Files\JetBrains\IntelliJ IDEA 2022.1.1\plugins\maven\lib\maven3\boot\plexus-classworlds-2.6.0.jar;" org.codehaus.classworlds.Launcher -Didea.version=2022.1.2 -DHEADLESS=false -DBROWSER=edge verify -Dcucumber.filter.tags=@login`
 
 ### Reports Location:
 After execution, reports can be accessible via the link displayed in the maven logs (provided by Cucumber latest version).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+https://github.com/krushnaDash/spring-bdd/
+https://anandhik.medium.com/cucumber-reports-808baa9f19f5

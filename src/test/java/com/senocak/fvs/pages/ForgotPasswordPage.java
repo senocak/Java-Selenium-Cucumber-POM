@@ -6,9 +6,10 @@ import org.openqa.selenium.WebDriver;
 
 @Slf4j
 public class ForgotPasswordPage extends Page {
+    private static final String URL = "/forgot-password";
     private static final ForgotPasswordPage instance = new ForgotPasswordPage();
-    private final By INPUT_EMAIL = By.xpath("/html/body/div[1]/div/div/div/div/form/div[1]/label/div/div[1]/div[2]/input");
-    private final By BUTTON_RESET = By.xpath("/html/body/div[1]/div/div/div/div/form/div[2]/button");
+    private final By INPUT_EMAIL = By.id("forgot-password-email");
+    private final By BUTTON_RESET = By.id("forgot-password-btn");
 
     /**
      * Private constructor to prevent instantiation
@@ -22,13 +23,6 @@ public class ForgotPasswordPage extends Page {
     public static ForgotPasswordPage getInstance(WebDriver wd) {
         driver = wd;
         return instance;
-    }
-
-    /**
-     * Redirect to Login Page
-     */
-    public void homePage(){
-        get(getUrlFromConfig() + "/forgot-password");
     }
 
     /**
@@ -48,10 +42,17 @@ public class ForgotPasswordPage extends Page {
         click(getElement(BUTTON_RESET));
     }
 
+    /**
+     * Redirect to Forgot Password page
+     */
     @Override protected void load() {
-        log.debug("Loading ForgotPasswordPage");
+        get(getUrlFromConfig() + URL);
+        log.debug("Loading Forgot Password page");
     }
+    /**
+     * Verify page is loaded
+     */
     @Override protected void isLoaded() {
-        log.debug("ForgotPasswordPage is loaded");
+        assertIsLoaded(URL);
     }
 }

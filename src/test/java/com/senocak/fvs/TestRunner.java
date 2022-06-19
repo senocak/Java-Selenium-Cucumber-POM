@@ -12,7 +12,8 @@ import org.junit.runner.RunWith;
     plugin = {
         "pretty",
         "json:target/cucumber-reports/cucumber.json",
-        "html:target/cucumber-reports/cucumber.html"
+        "html:target/cucumber-reports/cucumber.html",
+        "com.senocak.fvs.utility.plugin.EventHandler"
     },
     publish = true,
     glue = {

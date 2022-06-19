@@ -6,13 +6,15 @@ import org.openqa.selenium.WebDriver;
 
 @Slf4j
 public class ProfilePage extends Page {
+    private static final String URL = "/profile";
     private static final ProfilePage instance = new ProfilePage();
-    private final By INPUT_NAME = By.xpath("/html/body/div[1]/div/div/div/div/div/div[2]/main/div/div/div/div[2]/form/div/div/div[1]/label/div/div[1]/div[2]/input");
-    private final By INPUT_SURNAME = By.xpath("/html/body/div[1]/div/div/div/div/div/div[2]/main/div/div/div/div[2]/form/div/div/div[2]/label/div/div[1]/div[2]/input");
-    private final By INPUT_EMAIL = By.xpath("/html/body/div[1]/div/div/div/div/div/div[2]/main/div/div/div/div[2]/form/div/div/div[4]/label/div/div[1]/div[2]/input");
-    private final By DIV_DEFAULT_COMPANY = By.xpath("/html/body/div[1]/div/div/div/div/div/div[2]/main/div/div/div/div[2]/form/div/div/div[5]/label/div");
-    private final By DIV_DEFAULT_LOCATION = By.xpath("/html/body/div[1]/div/div/div/div/div/div[2]/main/div/div/div/div[2]/form/div/div/div[6]/label/div");
-    private final By BUTTON_SAVE = By.xpath("/html/body/div[1]/div/div/div/div/div/div[2]/main/div/div/div/div[2]/form/div/div/div[7]/button");
+    private final By INPUT_NAME = By.id("profile-input-name");
+    private final By INPUT_SURNAME = By.id("profile-input-surname");
+    private final By INPUT_PASSWORD = By.id("profile-input-password");
+    private final By INPUT_EMAIL = By.id("profile-input-email");
+    private final By DIV_DEFAULT_COMPANY = By.id("profile-input-company");
+    private final By DIV_DEFAULT_LOCATION = By.id("profile-input-location");
+    private final By BUTTON_SAVE = By.id("profile-save-btn");
 
     /**
      * Private constructor to prevent instantiation
@@ -26,13 +28,6 @@ public class ProfilePage extends Page {
     public static ProfilePage getInstance(WebDriver wd) {
         driver = wd;
         return instance;
-    }
-
-    /**
-     * Redirect to Login Page
-     */
-    public void homePage(){
-        get(getUrlFromConfig() + "/profile");
     }
 
     /**
@@ -101,10 +96,17 @@ public class ProfilePage extends Page {
         return this;
     }
 
+    /**
+     * Redirect to Profile page
+     */
     @Override protected void load() {
-        log.debug("Loading ForgotPasswordPage");
+        get(getUrlFromConfig() + URL);
+        log.debug("Loading Profile page");
     }
+    /**
+     * Verify page is loaded
+     */
     @Override protected void isLoaded() {
-        log.debug("ForgotPasswordPage is loaded");
+        assertIsLoaded(URL);
     }
 }

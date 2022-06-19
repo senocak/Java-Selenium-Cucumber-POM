@@ -15,6 +15,7 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import java.time.Duration;
@@ -35,6 +36,10 @@ public class DriverManager {
      */
     private DriverManager() {}
 
+    /**
+     * Singleton constructor to prevent instantiation.
+     * @return DriverManager instance.
+     */
     public static DriverManager getInstance() {
         return instance;
     }
@@ -159,9 +164,12 @@ public class DriverManager {
      * Get the logs for the current page
      */
     public void getLogs() {
-        Set<String> logs = driver.manage().logs().getAvailableLogTypes();
-        for (String l : logs) {
-            log.info("Log entry: {}", l);
+        Set<String> logTypes = driver.manage().logs().getAvailableLogTypes();
+        for (String logType : logTypes) {
+            List<LogEntry> logEntries = driver.manage().logs().get(logType).getAll();
+            for (LogEntry logEntry: logEntries) {
+                log.info("Log entry: {}", logEntry.getMessage());
+            }
         }
     }
 

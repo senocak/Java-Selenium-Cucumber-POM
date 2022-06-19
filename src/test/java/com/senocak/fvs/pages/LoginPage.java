@@ -6,10 +6,12 @@ import org.openqa.selenium.WebDriver;
 
 @Slf4j
 public class LoginPage extends Page {
+    private static final String URL = "/login";
     private static final LoginPage instance = new LoginPage();
-    private final By INPUT_USERNAME = By.xpath("/html/body/div[1]/div/div/div/div/form/label[1]/div/div[1]/div[2]/input");
-    private final By INPUT_PASSWORD = By.xpath("/html/body/div[1]/div/div/div/div/form/label[2]/div/div[1]/div[2]/input");
-    private final By BUTTON_LOGIN = By.xpath("/html/body/div[1]/div/div/div/div/form/div[3]/button");
+    private final By IMG_LOGIN = By.id("login-logo");
+    private final By INPUT_EMAIL = By.id("login-input-email");
+    private final By INPUT_PASSWORD = By.id("login-input-password");
+    private final By BUTTON_LOGIN = By.id("login-button");
 
     /**
      * Private constructor to prevent instantiation
@@ -26,19 +28,12 @@ public class LoginPage extends Page {
     }
 
     /**
-     * Redirect to Login Page
-     */
-    public void homePage(){
-        get(getUrlFromConfig() + "/login");
-    }
-
-    /**
      * Input username
      * @param text username
      */
     public void enterEmail(String text) {
         log.info("Entering username");
-        sendKeys(getElement(INPUT_USERNAME), text);
+        sendKeys(getElement(INPUT_EMAIL), text);
     }
 
     /**
@@ -59,18 +54,17 @@ public class LoginPage extends Page {
     }
 
     /**
-     * Verify if alert is displayed
-     * @param arg0 alert text
-     * @return true if alert is displayed
+     * Redirect to Login page
      */
-    public boolean verifyPopupMessage(String arg0) {
-        return isDisplayed(getElementByContainsText(arg0));
-    }
-
     @Override protected void load() {
-        log.debug("Loading LoginPage");
+        get(getUrlFromConfig() + URL);
+        log.debug("Loading Login page");
     }
+    /**
+     * Verify page is loaded
+     */
     @Override protected void isLoaded() {
-        log.debug("LoginPage is loaded");
+        assertIsLoaded(URL);
+        isDisplayed(getElement(IMG_LOGIN));
     }
 }

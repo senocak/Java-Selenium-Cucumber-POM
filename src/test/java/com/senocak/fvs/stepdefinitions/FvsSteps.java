@@ -1,8 +1,10 @@
 package com.senocak.fvs.stepdefinitions;
 
 import com.senocak.fvs.config.User;
+import com.senocak.fvs.pages.DemoPage;
 import com.senocak.fvs.pages.ForgotPasswordPage;
 import com.senocak.fvs.pages.LoginPage;
+import com.senocak.fvs.pages.Page;
 import com.senocak.fvs.pages.ProfilePage;
 import com.senocak.fvs.utility.Constants;
 import com.senocak.fvs.utility.Enums.PageType;
@@ -16,7 +18,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 import java.util.List;
@@ -29,6 +30,7 @@ public class FvsSteps {
     private LoginPage loginPage;
     private ForgotPasswordPage forgotPasswordPage;
     private ProfilePage profilePage;
+    private DemoPage demoPage;
     private ZulipClient zulipClient;
 
     @Before
@@ -38,6 +40,7 @@ public class FvsSteps {
         loginPage = LoginPage.getInstance(driver);
         forgotPasswordPage = ForgotPasswordPage.getInstance(driver);
         profilePage = ProfilePage.getInstance(driver);
+        demoPage = DemoPage.getInstance(driver);
         zulipClient = ZulipClient.getInstance();
     }
 
@@ -48,7 +51,7 @@ public class FvsSteps {
             log.debug("Scenario failed, taking screenshot");
             scenario.attach(driverManager.getScreenshot(), "image/png", "Screenshot");
         }
-        zulipClient.createReport(scenario);
+        //zulipClient.createReport(scenario);
         driverManager.getLogs();
         driverManager.closeDriver();
     }
@@ -58,13 +61,16 @@ public class FvsSteps {
     public void open_login_page(String page) {
         switch (PageType.fromString(page)) {
             case LOGIN:
-                loginPage.homePage();
+                loginPage.get();
                 break;
             case FORGOT_PASSWORD:
-                forgotPasswordPage.homePage();
+                forgotPasswordPage.get();
                 break;
             case PROFILE:
-                profilePage.homePage();
+                profilePage.get();
+                break;
+            case DEMO:
+                demoPage.get();
                 break;
             default:
                 Assert.fail("Unknown page type: " + page);
@@ -73,7 +79,7 @@ public class FvsSteps {
 
     // Login page
     @Given("Enter email and password")
-    public void enter_email_and_password(@NotNull DataTable dataTable) {
+    public void enter_email_and_password(DataTable dataTable) {
         List<Map<String,String>> dataRow = dataTable.asMaps(String.class,String.class);
         if (dataRow.size() != 1) {
             log.error("Only one row is allowed. Size: {}", dataRow.size());
@@ -112,7 +118,7 @@ public class FvsSteps {
 
     // Profile page
     @When("I update my profile")
-    public void iUpdateMyProfile(@NotNull DataTable dataTable) {
+    public void iUpdateMyProfile(DataTable dataTable) {
         List<Map<String,String>> dataRow = dataTable.asMaps(String.class,String.class);
         if (dataRow.size() != 1) {
             log.error("Only one row is allowed. Size: {}", dataRow.size());
@@ -150,6 +156,11 @@ public class FvsSteps {
     // Assertions
     @Then("I should see {string} message")
     public void i_should_see_message(String arg0) {
-        Assert.assertTrue(loginPage.verifyPopupMessage(arg0));
+        Page p = loginPage != null ? loginPage:
+            forgotPasswordPage != null ? forgotPasswordPage:
+            profilePage != null ? profilePage: null;
+        if (p == null) throw new RuntimeException("Page not found");
+
+        Assert.assertTrue(p.verifyPopupMessage(arg0));
     }
 }

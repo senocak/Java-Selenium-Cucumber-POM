@@ -3,7 +3,6 @@ package com.senocak.fvs.pages;
 import com.senocak.fvs.config.ConfigFileReader;
 import com.senocak.fvs.utility.Constants;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementClickInterceptedException;
@@ -27,6 +26,8 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 @Slf4j
 public abstract class Page extends LoadableComponent<Page> {
@@ -127,7 +128,7 @@ public abstract class Page extends LoadableComponent<Page> {
      * Clear the input of the given element
      * @param el element to clear the input of
      */
-    protected void clearInput(@NotNull WebElement el) {
+    protected void clearInput(WebElement el) {
         el.clear();
         el.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
     }
@@ -322,5 +323,20 @@ public abstract class Page extends LoadableComponent<Page> {
      */
     public String getUrlFromConfig(){
         return configFileReader.getUrl();
+    }
+
+    /**
+     * Verify if alert is displayed
+     * @param arg0 alert text
+     * @return true if alert is displayed
+     */
+    public boolean verifyPopupMessage(String arg0) {
+        return isDisplayed(getElementByContainsText(arg0));
+    }
+
+    protected void assertIsLoaded(String url){
+        String getCurrentUrl = driver.getCurrentUrl();
+        assertTrue("Not on the issue entry page: " + getCurrentUrl, getCurrentUrl.endsWith(url));
+        log.debug("LoginPage is loaded");
     }
 }
