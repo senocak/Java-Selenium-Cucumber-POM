@@ -48,9 +48,3 @@ After execution, reports can be accessible via the link displayed in the maven l
 
 
 
-
-
-
-
-https://github.com/krushnaDash/spring-bdd/
-https://anandhik.medium.com/cucumber-reports-808baa9f19f5
